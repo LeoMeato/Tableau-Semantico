@@ -1,5 +1,17 @@
 data Tree = Leaf {content :: [String]} | Node {content :: [String], fstchild :: Tree, sndchild :: Tree} deriving (Show)
 
+tableau :: String -> Tree
+tableau entrada = montaTableau (Node [entrada] (Leaf []) (Leaf []))
+
+montaTableau :: Tree -> Tree
+montaTableau (Node (h:t) fst snd) = aplicaRegra (detectaPadrao h) h (Node t fst snd)
+
+aplicaRegra :: (Int, [String]) -> String -> Tree -> Tree
+
+aplicaRegra (1, [formula1, formula2]) h (Node t fst snd) = Node(junta h (Node t++[formula1]++[formula2] fst snd))
+
+junta :: String -> Tree -> Tree
+junta h (Node t fst snd) = (Node (h:t) fst snd)
 
 -------------------------------------- Detecção de Padrão -----------------------------------------------
 

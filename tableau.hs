@@ -3,9 +3,26 @@ data Tree = Leaf {content :: [String]} | Node {content :: [String], fstchild :: 
 tableau :: String -> Tree
 tableau entrada = montaTableau (Leaf ["(~, "++entrada++")"])
 
+testaTableau :: String -> Bool
+testaTableau entrada = tautologia [] (tableau entrada)
+
 ------------------------------------------ Avaliação --------------------------------------------------
+-- Ainda não funcionando 100%
 
+tautologia :: [String] -> Tree -> Bool
+tautologia listaAcumulada (Node lista fst snd) | avalia (listaAcumulada++lista) lista == True = True
+                                               | (tautologia (listaAcumulada++lista) fst) && (tautologia (listaAcumulada++lista) snd) = True
+                                               | otherwise = False
+tautologia listaAcumulada (Leaf lista) | avalia (listaAcumulada++lista) lista == True = True
+                                       | otherwise = False
 
+avalia :: [String] -> [String] -> Bool
+avalia acumulada (h:t) = (isIn h acumulada) || (avalia acumulada t)
+avalia acumulada [] = False
+
+isIn :: String -> [String] -> Bool
+isIn ('(':'~':',':' ':'(':formula) lista = elem ('(':(achaFimSimples formula "" (-1))) lista
+isIn formula lista = elem ("(~, "++formula++")") lista
 
 -------------------------------------------------------------------------------------------------------
 
@@ -71,10 +88,13 @@ detectaPadrao ('(':'~':',':' ':'(':'v':',':' ':resto) = (7, (auxDetecta resto))
 detectaPadrao ('(':'~':',':' ':'(':'-':'>':',':' ':resto) = (8, (auxDetecta resto))
 detectaPadrao ('(':'~':',':' ':'(':'<':'-':'>':',':' ':resto) = (9, (auxDetecta resto))
 
+{-detectaPadrao ('(':'~':',':' ':'(':resto) = (10, ['~':(tiraParenteses resto)])
+detectaPadrao ('(':resto) = (11, [tiraParenteses resto])
+detectaPadrao _ = (12, ["Deu ruim aí, irmão"])-}
+
 detectaPadrao ('(':'~':',':' ':'(':resto) = (10, [('(':'~':',':' ':'(':resto)])
 detectaPadrao ('(':resto) = (11, [('(':resto)])
 detectaPadrao _ = (12, ["Deu ruim aí, irmão"])
-
 
 auxDetecta :: String -> [String]
 auxDetecta ('(':resto) = achaFimDuplo resto "" (-1)

@@ -1,7 +1,13 @@
 data Tree = Leaf {content :: [String]} | Node {content :: [String], fstchild :: Tree, sndchild :: Tree} deriving (Show)
 
 tableau :: String -> Tree
-tableau entrada = montaTableau (Leaf [entrada])
+tableau entrada = montaTableau (Leaf ["(~, "++entrada++")"])
+
+------------------------------------------ Avaliação --------------------------------------------------
+
+
+
+-------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------- Montagem da Árvore -------------------------------------------------------------------
 

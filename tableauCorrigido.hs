@@ -29,8 +29,8 @@ avalia acumulada (h : t) = (isIn h acumulada) || (avalia acumulada t)
 avalia acumulada [] = False
 
 isIn :: String -> [String] -> Bool
-isIn ('(' : '~' : ',' : ' ' : '(' : formula) lista = elem ('(' : (achaFimSimples formula "" (-1))) lista
-isIn formula lista = elem ("(~, " ++ formula ++ ")") lista
+isIn ('F' : ':' : formula) lista = elem ('V' : ':' : formula) lista
+isIn ('V' : ':' : formula) lista = elem ('F' : ':' : formula) lista
 
 -------------------------------------------------------------------------------------------------------
 
@@ -45,31 +45,31 @@ montaTableau (Leaf (h : t)) = junta h (aplicaRegra (detectaPadrao h) (Leaf t))
 regraTransitiva :: (Int, [String]) -> Tree -> Tree
 regraTransitiva (regra, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (regra, [formula1, formula2]) fst) (regraTransitiva (regra, [formula1, formula2]) snd))
 regraTransitiva (regra, [formula]) (Node t fst snd) = (Node t (regraTransitiva (regra, [formula]) fst) (regraTransitiva (regra, [formula]) snd))
-regraTransitiva (1, [formula1, formula2]) (Leaf t) = (Leaf (t ++ [formula1] ++ [formula2]))
-regraTransitiva (2, [formula1, formula2]) (Leaf t) = (Node t (Leaf [formula1]) (Leaf [formula2]))
-regraTransitiva (3, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(~, " ++ formula1 ++ ")"]) (Leaf [formula2]))
-regraTransitiva (4, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(^, " ++ formula1 ++ ", " ++ formula2 ++ ")"]) (Leaf ["(^, (~, " ++ formula1 ++ "), (~, " ++ formula2 ++ "))"]))
-regraTransitiva (5, [formula]) (Leaf t) = (Leaf (t ++ [formula]))
-regraTransitiva (6, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(~, " ++ formula1 ++ ")"]) (Leaf ["(~, " ++ formula2 ++ ")"]))
-regraTransitiva (7, [formula1, formula2]) (Leaf t) = (Leaf (t ++ ["(~, " ++ formula1 ++ ")"] ++ ["(~, " ++ formula2 ++ ")"]))
-regraTransitiva (8, [formula1, formula2]) (Leaf t) = (Leaf (t ++ [formula1] ++ ["(~, " ++ formula2 ++ ")"]))
-regraTransitiva (9, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(^, (~, " ++ formula1 ++ "), " ++ formula2 ++ ")"]) (Leaf ["(^, " ++ formula1 ++ ", (~, " ++ formula2 ++ "))"]))
-regraTransitiva (10, [formula]) (Leaf t) = (Leaf t)
+regraTransitiva (1, [formula1, formula2]) (Leaf t) = (Leaf (t ++ ["V:"++formula1] ++ ["V:"++formula2]))
+regraTransitiva (2, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["V:"++formula1]) (Leaf ["V:"++formula2]))
+regraTransitiva (3, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["F:" ++ formula1]) (Leaf ["V:"++formula2]))
+regraTransitiva (4, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["V:(^, " ++ formula1 ++ ", " ++ formula2 ++ ")"]) (Leaf ["V:(^, (~, " ++ formula1 ++ "), (~, " ++ formula2 ++ "))"]))
+regraTransitiva (5, [formula]) (Leaf t) = (Leaf (t ++ ["V:"++formula]))
+regraTransitiva (6, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["F:" ++ formula1]) (Leaf ["F:" ++ formula2]))
+regraTransitiva (7, [formula1, formula2]) (Leaf t) = (Leaf (t ++ ["F:" ++ formula1] ++ ["F:" ++ formula2]))
+regraTransitiva (8, [formula1, formula2]) (Leaf t) = (Leaf (t ++ ["V:" ++formula1] ++ ["F:" ++ formula2]))
+regraTransitiva (9, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["V:(^, (~, " ++ formula1 ++ "), " ++ formula2 ++ ")"]) (Leaf ["V:(^, " ++ formula1 ++ ", (~, " ++ formula2 ++ "))"]))
+regraTransitiva (10, [formula]) (Leaf t) = (Leaf (t ++ ["F:"++formula]))
 regraTransitiva (11, [formula]) (Leaf t) = (Leaf t)
 
 aplicaRegra :: (Int, [String]) -> Tree -> Tree
 aplicaRegra (regra, [formula1, formula2]) (Node t fst snd) = montaTableau (Node t (regraTransitiva (regra, [formula1, formula2]) fst) (regraTransitiva (regra, [(formula1), formula2]) snd))
 aplicaRegra (regra, [formula]) (Node t fst snd) = montaTableau (Node t (regraTransitiva (regra, [formula]) fst) (regraTransitiva (regra, [formula]) snd))
 aplicaRegra (1, [formula1, formula2]) (Leaf t) = montaTableau (Leaf (t ++ ["V:"++formula1] ++ ["V:"++formula2]))
-aplicaRegra (2, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf "V:"++[formula1]) (Leaf ["V:"++formula2]))
+aplicaRegra (2, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf ["V:"++formula1]) (Leaf ["V:"++formula2]))
 aplicaRegra (3, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf ["F:" ++ formula1]) (Leaf ["V:"++formula2]))
 aplicaRegra (4, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf ["V:(^, " ++ formula1 ++ ", " ++ formula2 ++ ")"]) (Leaf ["V:(^, (~, " ++ formula1 ++ "), (~, " ++ formula2 ++ "))"]))
 aplicaRegra (5, [formula]) (Leaf t) = montaTableau (Leaf (t ++ ["V:"++formula]))
 aplicaRegra (6, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf ["F:" ++ formula1]) (Leaf ["F:" ++ formula2]))
-aplicaRegra (7, [formula1, formula2]) (Leaf t) = montaTableau (Leaf (t ++ ["(~, " ++ formula1 ++ ")"] ++ ["(~, " ++ formula2 ++ ")"]))
-aplicaRegra (8, [formula1, formula2]) (Leaf t) = montaTableau (Leaf (t ++ [formula1] ++ ["(~, " ++ formula2 ++ ")"]))
-aplicaRegra (9, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf ["(^, (~, " ++ formula1 ++ "), " ++ formula2 ++ ")"]) (Leaf ["(^, " ++ formula1 ++ ", (~, " ++ formula2 ++ "))"]))
-aplicaRegra (10, [formula]) (Leaf t) = montaTableau (Leaf t)
+aplicaRegra (7, [formula1, formula2]) (Leaf t) = montaTableau (Leaf (t ++ ["F:" ++ formula1] ++ ["F:" ++ formula2]))
+aplicaRegra (8, [formula1, formula2]) (Leaf t) = montaTableau (Leaf (t ++ ["V:" ++formula1] ++ ["F:" ++ formula2]))
+aplicaRegra (9, [formula1, formula2]) (Leaf t) = montaTableau (Node t (Leaf ["V:(^, (~, " ++ formula1 ++ "), " ++ formula2 ++ ")"]) (Leaf ["V:(^, " ++ formula1 ++ ", (~, " ++ formula2 ++ "))"]))
+aplicaRegra (10, [formula]) (Leaf t) = montaTableau (Leaf (t ++ ["F:"++formula]))
 aplicaRegra (11, [formula]) (Leaf t) = montaTableau (Leaf t)
 
 junta :: String -> Tree -> Tree
@@ -90,7 +90,7 @@ detectaPadrao ('F':':':'(' : '^' : ',' : ' ' : resto) = (6, (auxDetecta resto))
 detectaPadrao ('F':':':'(' : 'v' : ',' : ' ' : resto) = (7, (auxDetecta resto))
 detectaPadrao ('F':':':'(' : '-' : '>' : ',' : ' ' : resto) = (8, (auxDetecta resto))
 detectaPadrao ('F':':':'(' : '<' : '-' : '>' : ',' : ' ' : resto) = (9, (auxDetecta resto))
-detectaPadrao ('V':':':'(' : resto) = (10, [('(' : '~' : ',' : ' ' : '(' : resto)])
+detectaPadrao ('V':':':'(' : '~' : ',' : ' ' : '(' : resto) = (10, [achaFimSimples resto "" (-1)])
 detectaPadrao formula = (11, [(formula)])
 
 auxDetecta :: String -> [String]

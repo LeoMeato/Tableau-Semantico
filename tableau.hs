@@ -36,37 +36,19 @@ montaTableau (Leaf (h:t)) = junta h (aplicaRegra (detectaPadrao h) (Leaf t))
 
 regraTransitiva :: (Int, [String]) -> Tree -> Tree
 
-regraTransitiva (1, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (1, [formula1, formula2]) fst) (regraTransitiva (1, [formula1, formula2]) snd))
+regraTransitiva (regra, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (regra, [formula1, formula2]) fst) (regraTransitiva (regra, [formula1, formula2]) snd))
+regraTransitiva (regra, [formula]) (Node t fst snd) = (Node t (regraTransitiva (regra, [formula]) fst) (regraTransitiva (regra, [formula]) snd))
+
 regraTransitiva (1, [formula1, formula2]) (Leaf t) = (Leaf (t++[formula1]++[formula2]))
-
-regraTransitiva (2, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (2, [formula1, formula2]) fst) (regraTransitiva (2, [formula1, formula2]) snd))
 regraTransitiva (2, [formula1, formula2]) (Leaf t) = (Node t (Leaf [formula1]) (Leaf [formula2]))
-
-regraTransitiva (3, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (3, [formula1, formula2]) fst) (regraTransitiva (3, [formula1, formula2]) snd))
 regraTransitiva (3, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(~, "++formula1++")"]) (Leaf [formula2]))
-
-regraTransitiva (4, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (4, [formula1, formula2]) fst) (regraTransitiva (4, [formula1, formula2]) snd))
 regraTransitiva (4, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(^, "++formula1++", "++formula2++")"]) (Leaf ["(^, (~, "++formula1++"), (~, "++formula2++"))"]))
-
-regraTransitiva (5, [formula]) (Node t fst snd) = (Node t (regraTransitiva (5, [formula]) fst) (regraTransitiva (5, [formula]) snd))
 regraTransitiva (5, [formula]) (Leaf t) = (Leaf (t++[formula]))
-
-regraTransitiva (6, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (6, [formula1, formula2]) fst) (regraTransitiva (6, [formula1, formula2]) snd))
 regraTransitiva (6, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(~, "++formula1++")"]) (Leaf ["(~, "++formula2++")"]))
-
-regraTransitiva (7, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (7, [formula1, formula2]) fst) (regraTransitiva (7, [formula1, formula2]) snd))
 regraTransitiva (7, [formula1, formula2]) (Leaf t) = (Leaf (t++["(~, "++formula1++")"]++["(~, "++formula2++")"]))
-
-regraTransitiva (8, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (8, [formula1, formula2]) fst) (regraTransitiva (8, [formula1, formula2]) snd))
 regraTransitiva (8, [formula1, formula2]) (Leaf t) = (Leaf (t++[formula1]++["(~, "++formula2++")"]))
-
-regraTransitiva (9, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (9, [formula1, formula2]) fst) (regraTransitiva (9, [formula1, formula2]) snd))
 regraTransitiva (9, [formula1, formula2]) (Leaf t) = (Node t (Leaf ["(^, (~, "++formula1++"), "++formula2++")"]) (Leaf ["(^, (~, "++formula1++"), "++formula2++")"]))
-
-regraTransitiva (10, [formula]) (Node t fst snd) = (Node t (regraTransitiva (10, [formula]) fst) (regraTransitiva (10, [formula]) snd))
 regraTransitiva (10, [formula]) (Leaf t) = (Leaf t)
-
-regraTransitiva (11, [formula]) (Node t fst snd) = (Node t (regraTransitiva (11, [formula]) fst) (regraTransitiva (11, [formula]) snd))
 regraTransitiva (11, [formula]) (Leaf t) = (Leaf t)
 
 aplicaRegra :: (Int, [String]) -> Tree -> Tree
@@ -154,3 +136,9 @@ decresce ')' = 1
 decresce _ = 0
 
 ----------------------------------------------------------------------------------------------------------
+
+
+
+teste :: Int -> Int
+teste x | (elem x [1..4]) || (elem x [6..9]) = 1
+        | otherwise = 2

@@ -1,3 +1,6 @@
+import  Data.List (intercalate)
+import  Text.Printf
+
 data Tree = Leaf {content :: [String]} | Node {content :: [String], fstchild :: Tree, sndchild :: Tree} deriving (Show)
 
 tableau :: String -> Tree
@@ -5,6 +8,10 @@ tableau entrada = montaTableau (Leaf ["(~, "++entrada++")"])
 
 testaTableau :: String -> Bool
 testaTableau entrada = tautologia [] (tableau entrada)
+
+tableauFormatado :: String -> IO()
+tableauFormatado entrada = printAsLines [(treeToString (tableau entrada) "")]
+
 
 ------------------------------------------ Avaliação --------------------------------------------------
 -- Ainda não funcionando 100%
@@ -117,8 +124,26 @@ decresce '(' = -1
 decresce ')' = 1
 decresce _ = 0
 
-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------
 
+-------------------------------------- Formatação da Árvore -----------------------------------------------
+
+
+printAsLines :: [String] -> IO ()
+printAsLines xs = mapM_ putStr  xs  -- a loop in the IO monad
+
+
+
+showFormulaList :: [String] -> String
+showFormulaList formulaList = intercalate "   /--/   "  $
+                            map (printf "%-9s") formulaList
+
+
+
+treeToString :: Tree -> String -> String
+treeToString (Leaf content) blank = blank ++ (showFormulaList content) ++ "\n"
+treeToString (Node content fstchild sndchild) blank = blank ++ (showFormulaList content) ++ "\n" ++ 
+                                                (treeToString (fstchild) (blank++".     ")) ++ (treeToString (sndchild) (blank++".     ")) ++ "\n"
 
 
 teste :: Int -> Int

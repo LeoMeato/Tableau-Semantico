@@ -17,6 +17,6 @@ showFormulaList formulaList = intercalate ","  $
 treeToString :: Tree -> String -> String
 treeToString (Leaf content) blank = blank ++ (showFormulaList content) ++ "\n"
 treeToString (Node content fstchild sndchild) blank = (showFormulaList content) ++ "\n"  ++ "      " ++ 
-                                                (treeToString (fstchild) blank) ++ (treeToString (sndchild) blank) ++ "\n" ++ "      "
+                                                (treeToString (fstchild) (blank++"     ")) ++ (treeToString (sndchild) (blank++"     ")) ++ "\n" ++ "      "
 
 

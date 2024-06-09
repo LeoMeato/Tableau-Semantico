@@ -13,7 +13,6 @@ tableauFormatado :: String -> IO ()
 tableauFormatado entrada = printAsLines [(treeToString (tableau entrada) "")]
 
 ------------------------------------------ Avaliação --------------------------------------------------
--- Ainda não funcionando 100%
 
 tautologia :: [String] -> Tree -> Bool
 tautologia listaAcumulada (Node lista fst snd)

@@ -42,6 +42,8 @@ montaTableau (Leaf []) = (Leaf [])
 montaTableau (Leaf (h : t)) = junta h (aplicaRegra (detectaPadrao h) (Leaf t))
 
 regraTransitiva :: (Int, [String]) -> Tree -> Tree
+-- Quando aplicaRegra é aplicada sobre um nó (e não uma folha), o resultado da aplicação da regra deve ser adicionado nas folhas. A regraTransitiva faz esse papel.
+-- Caso isso fosse feito chamando aplicaRegra recursivamente, a chamada recursiva de montaTableau ficaria fora de controle.
 regraTransitiva (regra, [formula1, formula2]) (Node t fst snd) = (Node t (regraTransitiva (regra, [formula1, formula2]) fst) (regraTransitiva (regra, [formula1, formula2]) snd))
 regraTransitiva (regra, [formula]) (Node t fst snd) = (Node t (regraTransitiva (regra, [formula]) fst) (regraTransitiva (regra, [formula]) snd))
 regraTransitiva (1, [formula1, formula2]) (Leaf t) = (Leaf (t ++ ["V:" ++ formula1] ++ ["V:" ++ formula2]))
@@ -79,7 +81,8 @@ junta h (Leaf t) = (Leaf (h : t))
 
 -------------------------------------- Detecção de Padrão -----------------------------------------------
 
-detectaPadrao :: String -> (Int, [String])
+detectaPadrao :: String -> (Int, [String]) -- Recebe uma fórmula e retorna um número de 1 a 10, que indica a regra a ser aplicada (e o 11 que significa que não se encaixa em nenhuma) e
+                                           -- uma lista com as sub-fórmulas imediatas da fórmula em questão, podendo ser uma ou duas, dependendo da regra.
 detectaPadrao ('V' : ':' : '(' : '^' : ',' : ' ' : resto) = (1, (auxDetecta resto))
 detectaPadrao ('V' : ':' : '(' : 'v' : ',' : ' ' : resto) = (2, (auxDetecta resto))
 detectaPadrao ('V' : ':' : '(' : '-' : '>' : ',' : ' ' : resto) = (3, (auxDetecta resto))
@@ -92,6 +95,8 @@ detectaPadrao ('F' : ':' : '(' : '<' : '-' : '>' : ',' : ' ' : resto) = (9, (aux
 detectaPadrao ('V' : ':' : '(' : '~' : ',' : ' ' : '(' : resto) = (10, [achaFimSimples resto "" (-1)])
 detectaPadrao formula = (11, [(formula)])
 
+-- funções para isolar as sub-fórmulas
+
 auxDetecta :: String -> [String]
 auxDetecta ('(' : resto) = achaFimDuplo resto "" (-1)
 
@@ -99,15 +104,15 @@ auxDetecta2 :: String -> String -> Int -> String
 auxDetecta2 (',' : ' ' : '(' : resto) x count = achaFimSimples resto x count
 
 achaFimDuplo :: String -> String -> Int -> [String]
-achaFimDuplo (h : t) x count
-  | count == 0 = ['(' : x, (auxDetecta2 (h : t) "" (-1))]
-  | count < 0 = achaFimDuplo t (x ++ [h]) (count + (decresce h))
+achaFimDuplo (h : t) formula1 count
+  | count == 0 = ['(' : formula1, (auxDetecta2 (h : t) "" (-1))]
+  | count < 0 = achaFimDuplo t (formula1 ++ [h]) (count + (decresce h))
   | otherwise = ["Tem coisa errada aí"]
 
 achaFimSimples :: String -> String -> Int -> String
-achaFimSimples (h : t) x count
-  | count == 0 = '(' : x
-  | count < 0 = achaFimSimples t (x ++ [h]) (count + (decresce h))
+achaFimSimples (h : t) formula count
+  | count == 0 = '(' : formula
+  | count < 0 = achaFimSimples t (formula ++ [h]) (count + (decresce h))
   | otherwise = "Tem coisa errada aí"
 
 decresce :: Char -> Int

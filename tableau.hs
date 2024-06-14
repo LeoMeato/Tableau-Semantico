@@ -10,7 +10,9 @@ testaTableau :: String -> Bool
 testaTableau entrada = tautologia [] (tableau entrada)
 
 tableauFormatado :: String -> IO ()
-tableauFormatado entrada = printAsLines [(treeToString (tableau entrada) "")]
+tableauFormatado entrada
+  | testaTableau entrada == True = printAsLines ["A entrada é uma Tautologia \n" ++ (treeToString (tableau entrada) "")]
+  | testaTableau entrada == False = printAsLines ["A entrada NÃO é uma Tautologia \n" ++ (treeToString (tableau entrada) "")]
 
 ------------------------------------------ Avaliação --------------------------------------------------
 

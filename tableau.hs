@@ -84,7 +84,7 @@ junta h (Leaf t) = (Leaf (h : t))
 -------------------------------------- Detecção de Padrão -----------------------------------------------
 
 detectaPadrao :: String -> (Int, [String]) -- Recebe uma fórmula e retorna um número de 1 a 10, que indica a regra a ser aplicada (e o 11 que significa que não se encaixa em nenhuma) e
-                                           -- uma lista com as sub-fórmulas imediatas da fórmula em questão, podendo ser uma ou duas, dependendo da regra.
+-- uma lista com as sub-fórmulas imediatas da fórmula em questão, podendo ser uma ou duas, dependendo da regra.
 detectaPadrao ('V' : ':' : '(' : '^' : ',' : ' ' : resto) = (1, (auxDetecta resto))
 detectaPadrao ('V' : ':' : '(' : 'v' : ',' : ' ' : resto) = (2, (auxDetecta resto))
 detectaPadrao ('V' : ':' : '(' : '-' : '>' : ',' : ' ' : resto) = (3, (auxDetecta resto))
